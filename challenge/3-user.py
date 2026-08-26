@@ -2,14 +2,15 @@
 """ User class module
 """
 import hashlib
+import uuid
 
 
 class User:
     """ User class representing a user """
 
     def __init__(self):
-        """ Intialize User attributes """
-        self.id = None
+        """ Initialize User attributes """
+        self.id = str(uuid.uuid4())
         self.__email = None
         self.__password = None
 
@@ -35,7 +36,8 @@ class User:
         """ Set password (stores MD5 hashed version) """
         if not isinstance(value, str):
             raise TypeError("password must be a string")
-        self.__password = hashlib.md5(value.encode()).hexdugest()
+        # 'hexdugest' əvəzinə 'hexdigest' yazılmalıdır
+        self.__password = hashlib.md5(value.encode()).hexdigest()
 
     def is_valid_password(self, password):
         """ Test if password matches the hashed password """
@@ -43,13 +45,4 @@ class User:
             return False
         if self.__password is None:
             return False
-
         return self.__password == hashlib.md5(password.encode()).hexdigest()
-
-
-if __name__ == "__main__":
-    u = User()
-    u.password = "Test User"
-
-    if not u.is_valid_password("Test User"):
-        print("is_valid_password should return True if it's the right password")
