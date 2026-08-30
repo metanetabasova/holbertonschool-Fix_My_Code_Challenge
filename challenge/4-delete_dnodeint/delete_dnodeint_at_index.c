@@ -2,54 +2,49 @@
 #include <stdlib.h>
 
 /**
- * delete_dnodeint_at_index - Deletes the node at index of a dlistint_t list
- * @head: Pointer to pointer to head of list
+ * delete_dnodeint_at_index - Deletes the node at index index
+ * @head: Pointer to the head of the list
  * @index: Index of the node to delete
  *
  * Return: 1 if it succeeded, -1 if it failed
  */
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
-	dlistint_t *saved_head;
-	dlistint_t *tmp;
-	unsigned int p;
+	dlistint_t *current;
+	unsigned int i = 0;
 
 	if (head == NULL || *head == NULL)
 		return (-1);
 
-	saved_head = *head;
-	p = 0;
-
-	while (p < index && *head != NULL)
-	{
-		*head = (*head)->next;
-		p++;
-	}
-
-	if (p != index || *head == NULL)
-	{
-		*head = saved_head;
-		return (-1);
-	}
+	current = *head;
 
 	if (index == 0)
 	{
-		*head = (*head)->next;
+		*head = current->next;
+
 		if (*head != NULL)
 			(*head)->prev = NULL;
-		free(saved_head);
+
+		free(current);
 		return (1);
 	}
 
-	/* CHECKER-İN İSTƏDİYİ ƏSAS DÜZƏLİŞ BURA İDİ: */
-	(*head)->prev->next = (*head)->next;
+	while (current != NULL && i < index)
+	{
+		current = current->next;
+		i++;
+	}
 
-	if ((*head)->next != NULL)
-		(*head)->next->prev = (*head)->prev;
+	if (current == NULL)
+		return (-1);
 
-	tmp = *head;
-	*head = saved_head;
-	free(tmp);
+	if (current->prev != NULL)
+		current->prev->next = current->next;
+
+	if (current->next != NULL)
+		current->next->prev = current->prev;
+
+	free(current);
 
 	return (1);
 }
