@@ -1,47 +1,55 @@
 #include "lists.h"
 #include <stdlib.h>
 
-/*
-* delete_dnodeint_at_index -Deletes the node at index of a dlistint_t list
-* @head: Pointer to pointer to the head of the list
-* @index: Index of the node to delete (starts at 0)
-*
-* Return: 1 if succeeded, -1 if failed
-*/
+/**
+ * delete_dnodeint_at_index - Deletes the node at index of a dlistint_t list
+ * @head: Pointer to pointer to head of list
+ * @index: Index of the node to delete
+ *
+ * Return: 1 if it succeeded, -1 if it failed
+ */
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
-        dlistint_t *current;
-        unsigned int i = 0;
+	dlistint_t *saved_head;
+	dlistint_t *tmp;
+	unsigned int p;
 
-        if (head == NULL || *head == NULL)
-                return (-1);
+	if (head == NULL || *head == NULL)
+		return (-1);
 
-        current = *head;
+	saved_head = *head;
+	p = 0;
 
-        if (index == 0)
-        {
-                *head = current->next;
-                if (*head != NULL)
-                        (*head)->prev = NULL;
-                free(current);
-                return (1);
-        }
+	while (p < index && *head != NULL)
+	{
+		*head = (*head)->next;
+		p++;
+	}
 
-        while (current != NULL && i < index)
-        {
-                current = current->next;
-                i++;
-        }
+	if (p != index || *head == NULL)
+	{
+		*head = saved_head;
+		return (-1);
+	}
 
-        if (current == NULL)
-                return (-1);
+	if (index == 0)
+	{
+		*head = (*head)->next;
+		if (*head != NULL)
+			(*head)->prev = NULL;
+		free(saved_head);
+		return (1);
+	}
 
-        if (current->prev != NULL)
-                current->prev->next = current->next;
+	/* CHECKER-İN İSTƏDİYİ ƏSAS DÜZƏLİŞ BURA İDİ: */
+	(*head)->prev->next = (*head)->next;
 
-        if (current->next != NULL)
-                current->next->prev = current->prev;
+	if ((*head)->next != NULL)
+		(*head)->next->prev = (*head)->prev;
 
-        free(current);
-        return (1);
+	tmp = *head;
+	*head = saved_head;
+	free(tmp);
+
+	return (1);
 }
